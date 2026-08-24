@@ -1,0 +1,66 @@
+[gd_scene load_steps=12 format=3 uid="uid://coclis1mm83of"]
+
+[ext_resource type="Shader" path="res://Asset/VFX/Shader/CameraOffset.gdshader" id="1_b0cs7"]
+[ext_resource type="Texture2D" uid="uid://dowwcurn560hv" path="res://Asset/VFX/Textures/plus.jpg" id="2_dtlbb"]
+
+[sub_resource type="Gradient" id="Gradient_tnahy"]
+offsets = PackedFloat32Array(0, 0.986726)
+colors = PackedColorArray(7.09929e-07, 0.400108, 4.81307e-07, 1, 3.72261e-08, 0.0620339, 0.00240095, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_cc3rj"]
+gradient = SubResource("Gradient_tnahy")
+
+[sub_resource type="Curve" id="Curve_pwcun"]
+max_value = 20.0
+_data = [Vector2(0, 2.95732), 0.0, 0.0, 0, 0, Vector2(0.405512, 0.115133), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_r6ybf"]
+curve = SubResource("Curve_pwcun")
+
+[sub_resource type="Curve" id="Curve_m2v5i"]
+_data = [Vector2(0.551852, 1), 0.0, 0.0, 0, 0, Vector2(0.762963, 0.1875), -8.14636, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_6b4wt"]
+curve = SubResource("Curve_m2v5i")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_e3t82"]
+particle_flag_disable_z = true
+emission_shape = 6
+emission_ring_axis = Vector3(0, 0, 1)
+emission_ring_height = 1.0
+emission_ring_radius = 1.0
+emission_ring_inner_radius = 0.0
+direction = Vector3(1, 1, 1)
+spread = 0.0
+gravity = Vector3(0, 30, 0)
+damping_min = 22.383
+damping_max = 23.054
+scale_min = 0.1
+scale_max = 0.3
+scale_curve = SubResource("CurveTexture_6b4wt")
+color_initial_ramp = SubResource("GradientTexture1D_cc3rj")
+emission_curve = SubResource("CurveTexture_r6ybf")
+turbulence_enabled = true
+turbulence_noise_scale = 0.53
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_jkb1p"]
+render_priority = 0
+shader = ExtResource("1_b0cs7")
+shader_parameter/camera_offset = 2.0
+shader_parameter/albedo = Color(1, 1, 1, 1)
+shader_parameter/texture_albedo = ExtResource("2_dtlbb")
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_vdf6k"]
+material = SubResource("ShaderMaterial_jkb1p")
+orientation = 2
+
+[node name="HEALITEM_VFX" type="GPUParticles3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+amount = 5
+lifetime = 0.6
+preprocess = 0.01
+fract_delta = false
+process_material = SubResource("ParticleProcessMaterial_e3t82")
+draw_pass_1 = SubResource("PlaneMesh_vdf6k")

@@ -1,0 +1,40 @@
+[gd_scene load_steps=8 format=3 uid="uid://d3dw4mj627ytu"]
+
+[ext_resource type="Material" uid="uid://bbxy4x3sqrxja" path="res://Asset/VFX/Shader/Alpha.tres" id="1_vxqvv"]
+
+[sub_resource type="Gradient" id="Gradient_moi84"]
+offsets = PackedFloat32Array(0.396875, 1)
+colors = PackedColorArray(0.843137, 1, 1, 1, 0.319776, 0.451084, 0.46502, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_pti4l"]
+gradient = SubResource("Gradient_moi84")
+
+[sub_resource type="Curve" id="Curve_u02eb"]
+_data = [Vector2(0, 0.527273), 0.0, 6.20578, 0, 0, Vector2(0.241158, 1), 0.0, 0.0, 0, 0, Vector2(0.659164, 0.465982), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_kfkfk"]
+curve = SubResource("Curve_u02eb")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_j0s85"]
+lifetime_randomness = 0.04
+emission_shape = 1
+emission_sphere_radius = 0.1
+spread = 0.0
+gravity = Vector3(0, 6, 0)
+attractor_interaction_enabled = false
+scale_min = 0.4
+scale_max = 0.5
+scale_curve = SubResource("CurveTexture_kfkfk")
+color_ramp = SubResource("GradientTexture1D_pti4l")
+anim_speed_min = -8.1
+anim_speed_max = -8.1
+
+[sub_resource type="SphereMesh" id="SphereMesh_sdrv3"]
+material = ExtResource("1_vxqvv")
+
+[node name="Footstep_VFX" type="GPUParticles3D"]
+amount = 3
+lifetime = 0.6
+process_material = SubResource("ParticleProcessMaterial_j0s85")
+draw_pass_1 = SubResource("SphereMesh_sdrv3")

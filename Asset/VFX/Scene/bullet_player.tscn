@@ -1,0 +1,80 @@
+[gd_scene load_steps=12 format=3 uid="uid://d3jtl7gfb534"]
+
+[ext_resource type="Shader" uid="uid://b5dab6uosq1cf" path="res://Asset/VFX/Shader/bullet_player.tres" id="1_o2fsd"]
+[ext_resource type="Texture2D" uid="uid://cijx4wrkhugif" path="res://Asset/VFX/Textures/SmoothMask.png" id="2_noomv"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bomwq"]
+render_priority = 0
+shader = ExtResource("1_o2fsd")
+shader_parameter/ColorParameter = Color(0.909804, 0.752941, 0, 1)
+shader_parameter/ColorParameter2 = Color(0.772549, 0.419608, 0, 1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_rdhun"]
+radius = 0.1
+height = 0.6
+
+[sub_resource type="Curve" id="Curve_yfbbw"]
+max_value = 1024.0
+_data = [Vector2(0, 651.789), 0.0, 0.0, 0, 0, Vector2(1, 0), -1584.77, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_18ste"]
+curve = SubResource("Curve_yfbbw")
+
+[sub_resource type="Curve" id="Curve_w3u0q"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), -2.32381, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_jvc18"]
+curve = SubResource("Curve_w3u0q")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_7xi16"]
+emission_shape_scale = Vector3(1, 0, 0)
+emission_shape = 1
+emission_sphere_radius = 0.1
+direction = Vector3(0, 1, 0)
+spread = 0.0
+initial_velocity_min = 2.0
+initial_velocity_max = 5.0
+gravity = Vector3(0, 0, 0)
+scale_min = 0.2
+scale_max = 0.2
+scale_curve = SubResource("CurveTexture_jvc18")
+color = Color(1, 0.917647, 0.0745098, 1)
+emission_curve = SubResource("CurveTexture_18ste")
+sub_emitter_mode = 1
+sub_emitter_frequency = 4.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_r1uvv"]
+transparency = 1
+shading_mode = 0
+vertex_color_use_as_albedo = true
+albedo_texture = ExtResource("2_noomv")
+disable_receive_shadows = true
+billboard_mode = 3
+billboard_keep_scale = true
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="QuadMesh" id="QuadMesh_jtxuf"]
+material = SubResource("StandardMaterial3D_r1uvv")
+size = Vector2(1, 0.3)
+
+[node name="Bullet_Player" type="Node3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1.91069e-15, 4.37114e-08, 1, 1, -4.37114e-08, 0, 4.37114e-08, 1, -4.37114e-08, 0, 0, 0)
+material_override = SubResource("ShaderMaterial_bomwq")
+cast_shadow = 0
+gi_mode = 0
+mesh = SubResource("CapsuleMesh_rdhun")
+skeleton = NodePath("../..")
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="MeshInstance3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.66487e-09, 0.175352, -7.66487e-09)
+amount = 5
+lifetime = 0.2
+fract_delta = false
+process_material = SubResource("ParticleProcessMaterial_7xi16")
+draw_pass_1 = SubResource("QuadMesh_jtxuf")

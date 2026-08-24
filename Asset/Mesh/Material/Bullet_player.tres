@@ -1,0 +1,16 @@
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://b4cbb0symmp8q"]
+
+[resource]
+diffuse_mode = 3
+specular_mode = 1
+disable_ambient_light = true
+disable_fog = true
+albedo_color = Color(0.811765, 0.678431, 0.054902, 1)
+metallic_specular = 1.0
+roughness = 0.93
+emission_enabled = true
+emission = Color(0.941176, 0.721569, 0, 1)
+emission_energy_multiplier = 2.0
+rim_enabled = true
+rim_tint = 0.44
+disable_receive_shadows = true

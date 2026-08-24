@@ -1,0 +1,47 @@
+[gd_scene load_steps=8 format=3 uid="uid://cjkswbewqecmw"]
+
+[ext_resource type="Material" uid="uid://bbxy4x3sqrxja" path="res://Asset/VFX/Shader/Alpha.tres" id="1_q8ne3"]
+
+[sub_resource type="Gradient" id="Gradient_moi84"]
+offsets = PackedFloat32Array(0.396875, 1)
+colors = PackedColorArray(0.843137, 1, 1, 1, 0.319776, 0.451084, 0.46502, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_pti4l"]
+gradient = SubResource("Gradient_moi84")
+
+[sub_resource type="Curve" id="Curve_u02eb"]
+_data = [Vector2(0, 0), 0.0, 16.1674, 0, 0, Vector2(0.165354, 1), 0.0, 0.0, 0, 0, Vector2(0.275591, 1), 0.121588, 0.121588, 0, 0, Vector2(0.547244, 0.208882), 0.579171, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_kfkfk"]
+curve = SubResource("Curve_u02eb")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_bo7gp"]
+particle_flag_align_y = true
+angle_min = -180.0
+angle_max = 180.0
+spread = 50.0
+flatness = 1.0
+initial_velocity_min = -10.0
+initial_velocity_max = 10.0
+gravity = Vector3(0, 0, 0)
+tangential_accel_max = 20.0
+damping_min = 10.0
+damping_max = 10.0
+scale_min = 0.45
+scale_max = 0.6
+scale_curve = SubResource("CurveTexture_kfkfk")
+color_ramp = SubResource("GradientTexture1D_pti4l")
+
+[sub_resource type="SphereMesh" id="SphereMesh_sdrv3"]
+material = ExtResource("1_q8ne3")
+
+[node name="Land_VFX" type="GPUParticles3D"]
+transform = Transform3D(0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, 0, 0.3, 0.2)
+emitting = false
+amount = 10
+lifetime = 0.6
+one_shot = true
+explosiveness = 0.8
+process_material = SubResource("ParticleProcessMaterial_bo7gp")
+draw_pass_1 = SubResource("SphereMesh_sdrv3")

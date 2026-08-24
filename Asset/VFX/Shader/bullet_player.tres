@@ -1,0 +1,120 @@
+[gd_resource type="VisualShader" load_steps=12 format=3 uid="uid://b5dab6uosq1cf"]
+
+[sub_resource type="VisualShaderNodeFloatOp" id="VisualShaderNodeFloatOp_63ocm"]
+default_input_values = [0, 0.0, 1, 20.0]
+operator = 2
+
+[sub_resource type="VisualShaderNodeFloatConstant" id="VisualShaderNodeFloatConstant_vmf4c"]
+constant = 100.0
+
+[sub_resource type="VisualShaderNodeMix" id="VisualShaderNodeMix_ku5y3"]
+default_input_values = [0, Vector3(0, 0, 0), 1, Vector3(1, 1, 1), 2, Vector3(0.5, 0.5, 0.5)]
+op_type = 3
+
+[sub_resource type="VisualShaderNodeVectorOp" id="VisualShaderNodeVectorOp_0vt3f"]
+operator = 2
+
+[sub_resource type="VisualShaderNodeFloatOp" id="VisualShaderNodeFloatOp_ks8pe"]
+default_input_values = [0, 0.0, 1, 2.0]
+operator = 5
+
+[sub_resource type="VisualShaderNodeFresnel" id="VisualShaderNodeFresnel_341dy"]
+default_input_values = [2, false, 3, 0.005]
+
+[sub_resource type="VisualShaderNodeColorParameter" id="VisualShaderNodeColorParameter_t2ma8"]
+parameter_name = "ColorParameter"
+
+[sub_resource type="VisualShaderNodeMix" id="VisualShaderNodeMix_3o5cx"]
+default_input_values = [0, Vector3(0, 0, 0), 1, Vector3(1, 1, 1), 2, Vector3(0.5, 0.5, 0.5)]
+op_type = 3
+
+[sub_resource type="VisualShaderNodeColorParameter" id="VisualShaderNodeColorParameter_fbye4"]
+parameter_name = "ColorParameter2"
+
+[sub_resource type="VisualShaderNodeFloatOp" id="VisualShaderNodeFloatOp_swam7"]
+default_input_values = [0, 0.0, 1, 5.0]
+operator = 5
+
+[sub_resource type="VisualShaderNodeClamp" id="VisualShaderNodeClamp_ke61d"]
+
+[resource]
+code = "shader_type spatial;
+render_mode blend_mix, depth_draw_opaque, cull_back, diffuse_lambert, specular_schlick_ggx;
+
+uniform vec4 ColorParameter : source_color;
+uniform vec4 ColorParameter2 : source_color;
+
+
+
+void fragment() {
+// ColorParameter:3
+	vec4 n_out3p0 = ColorParameter;
+
+
+// ColorParameter:6
+	vec4 n_out6p0 = ColorParameter2;
+
+
+// Fresnel:2
+	float n_in2p3 = 0.00500;
+	float n_out2p0 = pow(1.0 - clamp(dot(NORMAL, VIEW), 0.0, 1.0), n_in2p3);
+
+
+// FloatOp:14
+	float n_in14p1 = 2.00000;
+	float n_out14p0 = pow(n_out2p0, n_in14p1);
+
+
+// Clamp:9
+	float n_in9p1 = 0.00000;
+	float n_in9p2 = 1.00000;
+	float n_out9p0 = clamp(n_out14p0, n_in9p1, n_in9p2);
+
+
+// Mix:5
+	vec3 n_out5p0 = mix(vec3(n_out3p0.xyz), vec3(n_out6p0.xyz), vec3(n_out9p0));
+
+
+// FloatConstant:11
+	float n_out11p0 = 100.000000;
+
+
+// VectorOp:13
+	vec3 n_out13p0 = vec3(n_out3p0.xyz) * vec3(n_out11p0);
+
+
+// Mix:12
+	vec3 n_out12p0 = mix(n_out13p0, vec3(n_out6p0.xyz), vec3(n_out9p0));
+
+
+// Output:0
+	ALBEDO = n_out5p0;
+	EMISSION = n_out12p0;
+
+
+}
+"
+nodes/fragment/0/position = Vector2(300, 700)
+nodes/fragment/2/node = SubResource("VisualShaderNodeFresnel_341dy")
+nodes/fragment/2/position = Vector2(-1680, 240)
+nodes/fragment/3/node = SubResource("VisualShaderNodeColorParameter_t2ma8")
+nodes/fragment/3/position = Vector2(-840, 280)
+nodes/fragment/5/node = SubResource("VisualShaderNodeMix_3o5cx")
+nodes/fragment/5/position = Vector2(-100.048, 311.082)
+nodes/fragment/6/node = SubResource("VisualShaderNodeColorParameter_fbye4")
+nodes/fragment/6/position = Vector2(-880, 460)
+nodes/fragment/8/node = SubResource("VisualShaderNodeFloatOp_swam7")
+nodes/fragment/8/position = Vector2(-300, 100)
+nodes/fragment/9/node = SubResource("VisualShaderNodeClamp_ke61d")
+nodes/fragment/9/position = Vector2(-920, 860)
+nodes/fragment/10/node = SubResource("VisualShaderNodeFloatOp_63ocm")
+nodes/fragment/10/position = Vector2(-560, 1080)
+nodes/fragment/11/node = SubResource("VisualShaderNodeFloatConstant_vmf4c")
+nodes/fragment/11/position = Vector2(-540, 940)
+nodes/fragment/12/node = SubResource("VisualShaderNodeMix_ku5y3")
+nodes/fragment/12/position = Vector2(-106.162, 651.776)
+nodes/fragment/13/node = SubResource("VisualShaderNodeVectorOp_0vt3f")
+nodes/fragment/13/position = Vector2(-360, 780)
+nodes/fragment/14/node = SubResource("VisualShaderNodeFloatOp_ks8pe")
+nodes/fragment/14/position = Vector2(-1374.12, 553.242)
+nodes/fragment/connections = PackedInt32Array(3, 0, 5, 0, 6, 0, 5, 1, 2, 0, 8, 0, 9, 0, 5, 2, 9, 0, 10, 0, 5, 0, 0, 0, 12, 0, 0, 5, 9, 0, 12, 2, 11, 0, 13, 1, 2, 0, 14, 0, 14, 0, 9, 0, 3, 0, 13, 0, 13, 0, 12, 0, 6, 0, 12, 1)

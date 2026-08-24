@@ -1,0 +1,47 @@
+[gd_resource type="Shader" format=3 uid="uid://bnhp61be2244k"]
+
+[resource]
+code = "shader_type spatial;
+render_mode blend_mix,depth_draw_opaque,cull_back,diffuse_burley,specular_schlick_ggx;
+uniform vec4 albedo : source_color;
+uniform sampler2D texture_lawnDetail : hint_roughness_r,filter_linear_mipmap,repeat_enable;
+uniform sampler2D texture_cloud : hint_roughness_r,filter_linear_mipmap,repeat_enable;
+
+
+uniform	float LawnStripeWidth = 2.0;
+uniform	float LawnStripeDarkness = 0.1;
+uniform float LawnStripeAngle : hint_range(0,3.1415);
+
+
+
+const float sinestep = 0.01;
+
+varying vec2 world_vertex;
+
+void vertex(){
+	world_vertex = (MODEL_MATRIX * vec4(VERTEX,1.0)).xz;
+	world_vertex.x = world_vertex.x * 0.001f;
+	world_vertex.y = world_vertex.y * 0.004f;
+}
+
+void fragment() {
+	vec2 base_uv = UV;
+	vec3 color = albedo.rgb;
+	
+	//rotate the lawn stripe
+	float vertexX = base_uv.r * 100.0 * cos(LawnStripeAngle) - base_uv.g * 100.0 * sin(LawnStripeAngle);
+
+
+	color -= step(sin(vertexX*LawnStripeWidth),sinestep)*LawnStripeDarkness;
+	vec3 detail = 1.0f-texture(texture_lawnDetail,UV).rgb;
+	color += step(0.6,detail)*0.08f; 
+	float time = TIME * 0.005f;
+	vec3 cloud = 1.0f-texture(texture_cloud,world_vertex + time).rgb;
+	color -= step(0.6,cloud)*0.15f;
+
+	ALBEDO = color; 
+	METALLIC = 0.0;
+	ROUGHNESS = 1.0 ;
+	SPECULAR = 1.0 ;
+}
+"

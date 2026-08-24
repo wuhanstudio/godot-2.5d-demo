@@ -1,0 +1,20 @@
+[gd_resource type="ShaderMaterial" load_steps=4 format=3 uid="uid://cg03hhe76gxn6"]
+
+[ext_resource type="Shader" uid="uid://dlvcs6yhn42uv" path="res://Asset/Mesh/Material/Shader/main.tres" id="1_0mywg"]
+[ext_resource type="Texture2D" uid="uid://jxxq7ckf548q" path="res://Asset/Mesh/Texture/Godot_2.5D_Color - BK_Tree02.png" id="2_ev0xq"]
+[ext_resource type="Texture2D" uid="uid://djle78aagnysv" path="res://Asset/Mesh/Texture/Godot_2.5D_Metallic_roughness.png" id="4_2ei87"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_0mywg")
+shader_parameter/FloatParameter4 = 0.23
+shader_parameter/Metallic_02 = 0.0
+shader_parameter/FloatParameter3 = 0.0
+shader_parameter/Roughness_A = null
+shader_parameter/FloatParameter6 = 0.15
+shader_parameter/FloatParameter7 = 0.585
+shader_parameter/Specular = 1.0
+shader_parameter/AO_light_affect = 0.0
+shader_parameter/Rim = 0.1
+shader_parameter/tex_frg_2 = ExtResource("2_ev0xq")
+shader_parameter/tex_frg_3 = ExtResource("4_2ei87")
