@@ -1,5 +1,0 @@
-# Godot 4+ specific ignores
-*.import
-dist/
-.godot/
-/android/
