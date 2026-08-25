@@ -1,10 +1,10 @@
-[gd_resource type="StandardMaterial3D" load_steps=6 format=3 uid="uid://dsxg0h0pajegl"]
+[gd_resource type="StandardMaterial3D" format=3 uid="uid://dsxg0h0pajegl"]
 
-[ext_resource type="Texture2D" uid="uid://c6smlbstmbtmb" path="res://Asset/Characters/MainCharacter/Texture/BaseColor.png" id="1_qysc6"]
-[ext_resource type="Texture2D" uid="uid://bhfeakmsqngwj" path="res://Asset/Characters/MainCharacter/Texture/AO.png" id="2_jtkk5"]
-[ext_resource type="Texture2D" uid="uid://b2jh6r14bkdr5" path="res://Asset/Characters/MainCharacter/Texture/Emssion.png" id="3_2bx5g"]
-[ext_resource type="Texture2D" uid="uid://y1uh4nwjk5ow" path="res://Asset/Characters/MainCharacter/Texture/Metallic.png" id="4_dxiou"]
-[ext_resource type="Texture2D" uid="uid://e36yqtuf3abd" path="res://Asset/Characters/MainCharacter/Texture/Normal.png" id="5_ahk8o"]
+[ext_resource type="Texture2D" uid="uid://cu63wcd6dfhpf" path="res://Asset/Characters/MainCharacter/Texture/BaseColor.png" id="1_qysc6"]
+[ext_resource type="Texture2D" uid="uid://bstgkwycv4xl0" path="res://Asset/Characters/MainCharacter/Texture/AO.png" id="2_jtkk5"]
+[ext_resource type="Texture2D" uid="uid://f71fcht0ypcg" path="res://Asset/Characters/MainCharacter/Texture/Emssion.png" id="3_2bx5g"]
+[ext_resource type="Texture2D" uid="uid://ce2wxw5a5wjqq" path="res://Asset/Characters/MainCharacter/Texture/Metallic.png" id="4_dxiou"]
+[ext_resource type="Texture2D" uid="uid://3ayqbns4tp28" path="res://Asset/Characters/MainCharacter/Texture/Normal.png" id="5_ahk8o"]
 
 [resource]
 transparency = 4

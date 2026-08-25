@@ -8,11 +8,16 @@ enum {
 
 var state
 
-func changeStatetoAirbone(): 
-	state = Airbone
+func changeStateToAirbone():
+	if state != Dead: 
+		state = Airbone
 
-func changeStatetoNormal():
-	state = Normal
+func changeStateToNormal():
+	if state != Dead: 
+		state = Normal
+
+func changeStateToDead():
+	state = Dead
 
 func checkIsAirbone():
 	return state == Airbone

@@ -1,0 +1,22 @@
+[gd_scene format=3 uid="uid://cs5upa1i2dl8a"]
+
+[ext_resource type="Script" uid="uid://b47oy6e7sfq2" path="res://Game/scripts/spike_trap.gd" id="1_f8ld6"]
+[ext_resource type="PackedScene" uid="uid://cfflj78sblqje" path="res://Asset/Scene/item_spike_trap_short.tscn" id="2_6amia"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_qh8o7"]
+size = Vector3(1.7, 1.2, 6)
+
+[node name="SpikeTrap" type="Node3D" unique_id=402522571]
+script = ExtResource("1_f8ld6")
+
+[node name="ITEM_SPIKE_TRAP_SHORT" parent="." unique_id=606417045 instance=ExtResource("2_6amia")]
+
+[node name="Area3D" type="Area3D" parent="." unique_id=1295575765]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D" unique_id=1928156145]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9348445, 0, -3)
+shape = SubResource("BoxShape3D_qh8o7")
+
+[connection signal="body_entered" from="Area3D" to="." method="_on_area_3d_body_entered"]
