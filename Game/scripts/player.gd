@@ -17,6 +17,8 @@ var currentJump = 2
 @onready var animation_tree: AnimationTree = $LittleAdventurerAndie/AnimationTree
 @onready var footstep_vfx: GPUParticles3D = $VFX/Footstep_VFX
 
+signal currentHealthUpdate(newValue)
+
 func _ready():
 	currentHealth = MAX_HEALTH
 	controllable = true
@@ -95,6 +97,8 @@ func applyDamage():
 
 	currentHealth = currentHealth - 1
 	controllable = false
+	
+	emit_signal("currentHealthUpdate", currentHealth)
 
 	if currentHealth <= 0:
 		#print("The player is dead")
