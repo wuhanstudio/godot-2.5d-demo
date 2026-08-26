@@ -1,6 +1,10 @@
 extends CharacterBody3D
 
 @onready var animation_player_material: AnimationPlayer = $LittleAdventurerAndie/AnimationPlayer_Material
+@onready var little_adventurer_andie_mesh: MeshInstance3D = $LittleAdventurerAndie/LittleAdventurerAndie_GameRig/Skeleton3D/LittleAdventurerAndieMesh
+@onready var animation_player_heal: AnimationPlayer = $LittleAdventurerAndie/AnimationPlayer_Heal
+@onready var heal_player_vfx: GPUParticles3D = $VFX/HEAL_Player_VFX
+
 @onready var little_adventurer_andie: Node3D = $LittleAdventurerAndie
 
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
@@ -115,3 +119,15 @@ func applyDamage():
 		await get_tree().create_timer(2.0).timeout
 		animation_player_material.play("RESET")
 		isInvinsible = false
+
+func addHealth():
+	if currentHealth >= MAX_HEALTH:
+		return false
+
+	currentHealth = currentHealth + 1
+	emit_signal("currentHealthUpdate", currentHealth)
+	
+	animation_player_heal.play("Flash_Heal")
+	heal_player_vfx.restart()
+
+	return true

@@ -1,4 +1,4 @@
-[gd_resource type="VisualShader" load_steps=13 format=3 uid="uid://cdk3c7l65hcos"]
+[gd_resource type="VisualShader" format=3 uid="uid://cdk3c7l65hcos"]
 
 [sub_resource type="VisualShaderNodeFloatOp" id="VisualShaderNodeFloatOp_p8s8s"]
 default_input_values = [0, 0.0, 1, 2.0]
@@ -39,75 +39,6 @@ input_name = "time"
 function = 0
 
 [resource]
-code = "shader_type spatial;
-render_mode blend_mix, depth_draw_opaque, cull_back, diffuse_lambert, specular_schlick_ggx, shadows_disabled;
-
-uniform vec4 ColorParameter : source_color;
-
-
-
-void fragment() {
-// ColorParameter:4
-	vec4 n_out4p0 = ColorParameter;
-
-
-// FloatConstant:13
-	float n_out13p0 = 0.600000;
-
-
-// FloatConstant:14
-	float n_out14p0 = 0.600000;
-
-
-// FloatConstant:7
-	float n_out7p0 = 0.600000;
-
-
-// Input:8
-	float n_out8p0 = TIME;
-
-
-// FloatOp:12
-	float n_in12p1 = 5.00000;
-	float n_out12p0 = n_out8p0 * n_in12p1;
-
-
-// FloatFunc:9
-	float n_out9p0 = sin(n_out12p0);
-
-
-// FloatOp:10
-	float n_in10p1 = 2.00000;
-	float n_out10p0 = n_out9p0 + n_in10p1;
-
-
-// FloatOp:11
-	float n_out11p0 = n_out7p0 * n_out10p0;
-
-
-// VectorOp:6
-	vec3 n_out6p0 = vec3(n_out4p0.xyz) * vec3(n_out11p0);
-
-
-// Fresnel:2
-	float n_in2p3 = 3.00000;
-	float n_out2p0 = pow(1.0 - clamp(dot(NORMAL, VIEW), 0.0, 1.0), n_in2p3);
-
-
-// Mix:5
-	vec3 n_in5p0 = vec3(0.00000, 0.00000, 0.00000);
-	vec3 n_out5p0 = mix(n_in5p0, n_out6p0, vec3(n_out2p0));
-
-
-// Output:0
-	ALBEDO = vec3(n_out4p0.xyz);
-	METALLIC = n_out13p0;
-	ROUGHNESS = n_out14p0;
-	EMISSION = n_out5p0;
-
-
-}
-"
 flags/shadows_disabled = true
 nodes/fragment/0/position = Vector2(700, 140)
 nodes/fragment/2/node = SubResource("VisualShaderNodeFresnel_0ptsp")
