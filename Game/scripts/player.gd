@@ -7,6 +7,13 @@ extends CharacterBody3D
 
 @onready var little_adventurer_andie: Node3D = $LittleAdventurerAndie
 
+var drag_strength := 5.0
+var max_drag := 150.0
+
+var dragging := false
+var drag_start := Vector2.ZERO
+var drag_current := Vector2.ZERO
+
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
 const SPEED = 10
 const JUMP_VELOCITY = 16
@@ -28,6 +35,25 @@ func _ready():
 	controllable = true
 	isInvinsible = false
 	currentJump = 0
+
+func _input(event):
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_LEFT:
+
+			# Mouse pressed
+			if event.pressed:
+				dragging = true
+				drag_start = event.position
+				drag_current = event.position
+
+			# Mouse released
+			else:
+				dragging = false
+				velocity.x = 0
+
+	elif event is InputEventMouseMotion and dragging:
+		drag_current = event.position
+
 
 func _process(delta):
 	handleMovementVFX()
@@ -68,6 +94,20 @@ func _physics_process(delta: float) -> void:
 			velocity.x = horizontalInput * SPEED
 		else:
 			velocity.x = move_toward(velocity.x, 0, SPEED)
+
+		if dragging:
+			var drag = drag_start - drag_current
+			#drag = drag.limit_length(max_drag)
+			if (sign(drag[0]) != 0):
+				velocity.x = -sign(drag[0]) * SPEED
+			else:
+				velocity.x = move_toward(velocity.x, 0, SPEED)
+
+			# Handle jump.
+			if sign(drag[1]) > 0:
+				velocity.y = JUMP_VELOCITY
+				currentJump = currentJump - 1
+				playerGroundSmokeVFX()
 
 		move_and_slide()
 
