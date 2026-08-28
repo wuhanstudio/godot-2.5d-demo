@@ -2,10 +2,16 @@ extends CharacterBody3D
 
 @onready var animation_player_material: AnimationPlayer = $LittleAdventurerAndie/AnimationPlayer_Material
 @onready var little_adventurer_andie_mesh: MeshInstance3D = $LittleAdventurerAndie/LittleAdventurerAndie_GameRig/Skeleton3D/LittleAdventurerAndieMesh
+@onready var heal_player_vfx: GPUParticles3D = $LittleAdventurerAndie/LittleAdventurerAndie_GameRig/VFX/HEAL_Player_VFX
+
 @onready var animation_player_heal: AnimationPlayer = $LittleAdventurerAndie/AnimationPlayer_Heal
-@onready var heal_player_vfx: GPUParticles3D = $VFX/HEAL_Player_VFX
+@onready var animation_player_melee: AnimationPlayer = $LittleAdventurerAndie/LittleAdventurerAndie_GameRig/VFX/AnimationPlayer_BladeVFX
 
 @onready var little_adventurer_andie: Node3D = $LittleAdventurerAndie
+@onready var melee_vfx: Node3D = $LittleAdventurerAndie/LittleAdventurerAndie_GameRig/VFX/MELEE_VFX
+
+@onready var blade_vfx: MeshInstance3D = $"LittleAdventurerAndie/LittleAdventurerAndie_GameRig/VFX/Blade VFX"
+@onready var area_3d_hitbox: Area3D = $LittleAdventurerAndie/Area3D_Hitbox
 
 var drag_strength := 5.0
 var max_drag := 150.0
@@ -24,21 +30,29 @@ var currentHealth = MAX_HEALTH
 var controllable = true
 var isInvinsible = false
 var currentJump = 2
+var uncontrollableRemain = 0
+var getHurtCooldown = 1
+var meleeAttackCooldown = 0.6
+var meleeAttackDamage = 10
 
 @onready var animation_tree: AnimationTree = $LittleAdventurerAndie/AnimationTree
-@onready var footstep_vfx: GPUParticles3D = $VFX/Footstep_VFX
+@onready var footstep_vfx: GPUParticles3D = $LittleAdventurerAndie/LittleAdventurerAndie_GameRig/VFX/Footstep_VFX
 
 signal currentHealthUpdate(newValue)
 
 func _ready():
+	area_3d_hitbox.monitoring = false
+
 	currentHealth = MAX_HEALTH
 	controllable = true
 	isInvinsible = false
 	currentJump = 0
-
+	
 func _input(event):
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT:
+			if event.double_click:
+				meleeAttack()
 
 			# Mouse pressed
 			if event.pressed:
@@ -57,23 +71,30 @@ func _input(event):
 
 func _process(delta):
 	handleMovementVFX()
-
+	
+	if currentHealth <= 0:
+		return
+	
 	animation_tree.set("parameters/StateMachine/GroundMovement/blend_position", abs(velocity.x))
 	animation_tree.set("parameters/StateMachne/Airbone/blend_position", velocity.y)
 	if is_on_floor():
 		animation_tree.changeStateToNormal()
 	else:
 		animation_tree.changeStateToAirbone()
-
+	
+	if controllable == false && currentHealth > 0:
+		uncontrollableRemain -= delta
+		if uncontrollableRemain <= 0:
+			controllable = true
+		
 func _physics_process(delta: float) -> void:
 	if controllable:
-	
 		if velocity.x != 0:
-			var faceRight = velocity.x >0
+			var faceRight = velocity.x > 0
 			if faceRight:
-				little_adventurer_andie.rotation = Vector3(0, 5 * PI / 8, 0)
+				little_adventurer_andie.rotation = Vector3(0, 4 * PI / 8, 0)
 			else:
-				little_adventurer_andie.rotation = Vector3(0, -5 * PI / 8, 0)
+				little_adventurer_andie.rotation = Vector3(0, -4 * PI / 8, 0)
 		
 		# Add the gravity.
 		if not is_on_floor():
@@ -86,6 +107,9 @@ func _physics_process(delta: float) -> void:
 			velocity.y = JUMP_VELOCITY
 			currentJump = currentJump - 1
 			playerGroundSmokeVFX()
+		
+		if Input.is_action_just_pressed("MelleeAttack"):
+			meleeAttack()
 
 		# Get the input direction and handle the movement/deceleration.
 		# As good practice, you should replace UI actions with custom gameplay actions.
@@ -141,7 +165,8 @@ func applyDamage():
 
 	currentHealth = currentHealth - 1
 	controllable = false
-	
+	uncontrollableRemain += getHurtCooldown
+
 	emit_signal("currentHealthUpdate", currentHealth)
 
 	if currentHealth <= 0:
@@ -149,16 +174,25 @@ func applyDamage():
 		animation_tree.changeStateToDead()
 		controllable = false
 	else:
+		animation_tree.set("parameters/OneShotMelee/request", AnimationNodeOneShot.ONE_SHOT_REQUEST_ABORT)
 		animation_tree.set("parameters/OneShotHurt/request", AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE)
 		animation_player_material.play("Flash_Invincible")
-
-		await get_tree().create_timer(0.9).timeout
-		controllable = true
-		isInvinsible = true
 
 		await get_tree().create_timer(2.0).timeout
 		animation_player_material.play("RESET")
 		isInvinsible = false
+
+func meleeAttack():
+	if controllable and is_on_floor():
+		animation_tree.set("parameters/OneShotHit/request", AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE)
+		animation_player_melee.play("play_blade")
+
+		area_3d_hitbox.monitoring = true
+		controllable = false
+		uncontrollableRemain += meleeAttackCooldown
+		await get_tree().create_timer(0.6).timeout
+		area_3d_hitbox.monitoring = false
+
 
 func addHealth():
 	if currentHealth >= MAX_HEALTH:
@@ -171,3 +205,15 @@ func addHealth():
 	heal_player_vfx.restart()
 
 	return true
+
+
+func _on_area_3d_hitbox_body_entered(body: Node3D) -> void:
+	body.applyDamage(10)
+	
+	var vfx_position = body.global_position
+	vfx_position.y += 1.5
+	vfx_position.z += 1
+	
+	melee_vfx.global_position = vfx_position
+	for item in melee_vfx.get_children():
+		item.restart()
