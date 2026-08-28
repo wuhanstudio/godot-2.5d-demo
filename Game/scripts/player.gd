@@ -11,7 +11,7 @@ extends CharacterBody3D
 @onready var melee_vfx: Node3D = $LittleAdventurerAndie/LittleAdventurerAndie_GameRig/VFX/MELEE_VFX
 
 @onready var blade_vfx: MeshInstance3D = $"LittleAdventurerAndie/LittleAdventurerAndie_GameRig/VFX/Blade VFX"
-@onready var area_3d_hitbox: Area3D = $LittleAdventurerAndie/Area3D_Hitbox
+@onready var area_3d_hitbox: Area3D = $LittleAdventurerAndie/LittleAdventurerAndie_GameRig/VFX/Area3D_Hitbox
 
 var drag_strength := 5.0
 var max_drag := 150.0
@@ -39,6 +39,7 @@ var meleeAttackDamage = 10
 @onready var footstep_vfx: GPUParticles3D = $LittleAdventurerAndie/LittleAdventurerAndie_GameRig/VFX/Footstep_VFX
 
 signal currentHealthUpdate(newValue)
+signal playerReachedDoor()
 
 func _ready():
 	area_3d_hitbox.monitoring = false
@@ -102,7 +103,7 @@ func _process(delta):
 	else:
 		animation_tree.changeStateToAirbone()
 	
-	if controllable == false && currentHealth > 0:
+	if controllable == false && currentHealth > 0 && uncontrollableRemain > 0:
 		uncontrollableRemain -= delta
 		if uncontrollableRemain <= 0:
 			controllable = true
@@ -237,3 +238,8 @@ func _on_area_3d_hitbox_body_entered(body: Node3D) -> void:
 	melee_vfx.global_position = vfx_position
 	for item in melee_vfx.get_children():
 		item.restart()
+
+func reachedDoor():
+	controllable = false
+	uncontrollableRemain = -1
+	emit_signal("playerReachedDoor")
