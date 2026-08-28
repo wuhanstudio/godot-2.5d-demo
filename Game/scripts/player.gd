@@ -48,7 +48,27 @@ func _ready():
 	isInvinsible = false
 	currentJump = 0
 	
+var last_tap_time := 0.0
+var last_tap_position := Vector2.ZERO
+
+const DOUBLE_TAP_DELAY := 0.3
+const DOUBLE_TAP_DISTANCE := 50.0
+
 func _input(event):
+	if event is InputEventScreenTouch and event.pressed:
+		var now := Time.get_ticks_msec() / 1000.0
+
+		if (
+ 			now - last_tap_time <= DOUBLE_TAP_DELAY
+			and event.position.distance_to(last_tap_position) <= DOUBLE_TAP_DISTANCE
+		):
+			print("Double tap!")
+			meleeAttack()
+			last_tap_time = 0.0
+		else:
+			last_tap_time = now
+			last_tap_position = event.position
+
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			if event.double_click:
